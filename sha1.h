@@ -54,10 +54,16 @@ extern "C" {
 #define SHA1_SIZE            20
 #define SHA1_SIZE_FORMATTED  41
 
+#if defined(_MSC_VER)
+    typedef unsigned __int64   sha1_uint64;
+#else
+    typedef unsigned long long sha1_uint64;
+#endif
+
 typedef struct
 {
     unsigned int h[5];
-    unsigned long long sz;
+    sha1_uint64 sz;
     unsigned char cache[64];
     unsigned int cacheLen;
 } sha1_context;
@@ -354,8 +360,8 @@ void sha1_finalize(sha1_context* ctx, unsigned char* digest)
     /* Now we need to fill the buffer with zeros until we've filled 56 bytes (8 bytes left over for the length). */
     sha1_zero_memory(ctx->cache + ctx->cacheLen, cacheRemaining - 8);
 
-    szLo = ((ctx->sz >>  0) & 0xFFFFFFFF) << 3;
-    szHi = ((ctx->sz >> 32) & 0xFFFFFFFF) << 3;
+    szLo = (unsigned int)(((ctx->sz >>  0) & 0xFFFFFFFF) << 3);
+    szHi = (unsigned int)(((ctx->sz >> 32) & 0xFFFFFFFF) << 3);
     ctx->cache[56] = (unsigned char)((szHi >> 24) & 0xFF);
     ctx->cache[57] = (unsigned char)((szHi >> 16) & 0xFF);
     ctx->cache[58] = (unsigned char)((szHi >>  8) & 0xFF);
