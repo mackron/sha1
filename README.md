@@ -25,7 +25,7 @@ Use `sha1_format()` to format the digest as a hex string. The capacity of the ou
 be at least `SHA1_SIZE_FORMATTED` bytes.
 
 This library does not perform any memory allocations and does not use anything from the standard
-library except for `size_t` and `NULL`, both of which are drawn in via stddef.h. No other standard
+library except for `size_t` and `NULL`, both of which are drawn in from stddef.h. No other standard
 headers are included.
 
 There is no need to link to anything with this library. You can use SHA1_IMPLEMENTATION to define
