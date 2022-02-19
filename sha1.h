@@ -51,14 +51,18 @@ extern "C" {
 
 #include <stddef.h> /* For size_t and NULL. */
 
-#define SHA1_SIZE            20
-#define SHA1_SIZE_FORMATTED  41
-
 #if defined(_MSC_VER)
     typedef unsigned __int64   sha1_uint64;
 #else
     typedef unsigned long long sha1_uint64;
 #endif
+
+#if !defined(SHA1_API)
+    #define SHA1_API
+#endif
+
+#define SHA1_SIZE            20
+#define SHA1_SIZE_FORMATTED  41
 
 typedef struct
 {
@@ -68,11 +72,11 @@ typedef struct
     unsigned int cacheLen;
 } sha1_context;
 
-void sha1_init(sha1_context* ctx);
-void sha1_update(sha1_context* ctx, const void* src, size_t sz);
-void sha1_finalize(sha1_context* ctx, unsigned char* digest);
-void sha1(unsigned char* digest, const void* src, size_t sz);
-void sha1_format(char* dst, size_t dstCap, const unsigned char* hash);
+SHA1_API void sha1_init(sha1_context* ctx);
+SHA1_API void sha1_update(sha1_context* ctx, const void* src, size_t sz);
+SHA1_API void sha1_finalize(sha1_context* ctx, unsigned char* digest);
+SHA1_API void sha1(unsigned char* digest, const void* src, size_t sz);
+SHA1_API void sha1_format(char* dst, size_t dstCap, const unsigned char* hash);
 
 #ifdef __cplusplus
 }
@@ -261,7 +265,7 @@ static void sha1_update_block(sha1_context* ctx, const unsigned char* src)
     ctx->cacheLen = 0;
 }
 
-void sha1_init(sha1_context* ctx)
+SHA1_API void sha1_init(sha1_context* ctx)
 {
     if (ctx == NULL) {
         return;
@@ -276,7 +280,7 @@ void sha1_init(sha1_context* ctx)
     ctx->h[4] = 0xC3D2E1F0;
 }
 
-void sha1_update(sha1_context* ctx, const void* src, size_t sz)
+SHA1_API void sha1_update(sha1_context* ctx, const void* src, size_t sz)
 {
     const unsigned char* bytes = (const unsigned char*)src;
     size_t totalBytesProcessed = 0;
@@ -321,7 +325,7 @@ void sha1_update(sha1_context* ctx, const void* src, size_t sz)
     ctx->sz += sz;
 }
 
-void sha1_finalize(sha1_context* ctx, unsigned char* digest)
+SHA1_API void sha1_finalize(sha1_context* ctx, unsigned char* digest)
 {
     size_t cacheRemaining;
     unsigned int szLo;
@@ -380,7 +384,7 @@ void sha1_finalize(sha1_context* ctx, unsigned char* digest)
     digest[16] = (unsigned char)(ctx->h[4] >> 24); digest[17] = (unsigned char)(ctx->h[4] >> 16); digest[18] = (unsigned char)(ctx->h[4] >> 8); digest[19] = (unsigned char)(ctx->h[4] >> 0);
 }
 
-void sha1(unsigned char* digest, const void* src, size_t sz)
+SHA1_API void sha1(unsigned char* digest, const void* src, size_t sz)
 {
     sha1_context ctx;
     sha1_init(&ctx);
@@ -398,7 +402,7 @@ static void sha1_format_byte(char* dst, unsigned char byte)
     dst[1] = hex[(byte & 0x0F)     ];
 }
 
-void sha1_format(char* dst, size_t dstCap, const unsigned char* hash)
+SHA1_API void sha1_format(char* dst, size_t dstCap, const unsigned char* hash)
 {
     size_t i;
 
